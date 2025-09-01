@@ -81,17 +81,9 @@ def generate_new_stock():
             "Vers": new_version
         }
         stock_ref.set(payload)
-        print("Stock refreshed:", payload)
     except Exception as e:
         print("[Firebase Error]", e)
     return payload
-
-async def refresh_stock_task():
-    while True:
-        new_stock = generate_new_stock()
-        stock_ref.set(new_stock)
-        print(f"[Stock Refreshed] {new_stock}")
-        await asyncio.sleep(300)
 
 def get_next_5_minute_mark(current_time):
     return ((current_time // 300) + 1) * 300
@@ -100,16 +92,20 @@ def stock_refresh_loop():
     while True:
         current_time = int(time.time())
         next_mark = get_next_5_minute_mark(current_time)
-        wait_time = (next_mark - current_time) - 5
+        refresh_time = next_mark - 5
 
-        if wait_time <= 0:
-            wait_time = 0
+        if current_time >= refresh_time:
+            next_mark = get_next_5_minute_mark(current_time + 60)
+            refresh_time = next_mark - 5
 
-        print(f"Waiting {wait_time} sec until next stock refresh at {time.strftime('%H:%M:%S', time.localtime(next_mark))}")
+        wait_time = refresh_time - current_time
+        print(f"Waiting {wait_time} sec until stock refresh at {time.strftime('%H:%M:%S', time.localtime(refresh_time))}")
         time.sleep(wait_time)
-        
+
         payload = generate_new_stock()
         print(f"Stock refreshed at {time.strftime('%H:%M:%S')} -> {payload}")
+
+        time.sleep(1)
 
 @app.get("/")
 def root():
