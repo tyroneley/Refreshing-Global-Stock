@@ -1,2 +1,4 @@
-fastapi
-uvicorn
+firebase-admin==6.6.0
+fastapi==0.111.0
+uvicorn[standard]==0.30.1
+pydantic==2.8.2
