@@ -73,11 +73,18 @@ def generate_new_stock():
     current_stock = temp_stock
 
     try:
-        stock_ref.set(temp_stock)
-        print("Stock refreshed:", temp_stock)
+        data = stock_ref.get()
+        new_version = data.get("Vers", 0) + 1
+
+        payload = {
+            "Items": temp_stock,
+            "Vers": new_version
+        }
+        stock_ref.set(payload)
+        print("Stock refreshed:", payload)
     except Exception as e:
         print("[Firebase Error]", e)
-    return temp_stock
+    return payload
 
 async def refresh_stock_task():
     while True:
@@ -101,8 +108,8 @@ def stock_refresh_loop():
         print(f"Waiting {wait_time} sec until next stock refresh at {time.strftime('%H:%M:%S', time.localtime(next_mark))}")
         time.sleep(wait_time)
         
-        new_stock = generate_new_stock()
-        print(f"Stock refreshed at {time.strftime('%H:%M:%S')} -> {new_stock}")
+        payload = generate_new_stock()
+        print(f"Stock refreshed at {time.strftime('%H:%M:%S')} -> {payload}")
 
 @app.get("/")
 def root():
@@ -112,7 +119,7 @@ def root():
 def get_stock():
     try:
         data = stock_ref.get()
-        return {"stock": data}
+        return data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
