@@ -16,29 +16,23 @@ TEMPLATE = {
 
 STOCK = {
     1: {
-        "ItemName": "Lucky Block",
+        "ItemName": "Polish",
         "Chance": 100,
-        "AmountUpperBound": 4,
+        "AmountUpperBound": 3,
         "AmountLowerBound": 1,
     },
     2: {
-        "ItemName": "Shiny Lucky Block",
+        "ItemName": "Microfiber Cloth",
         "Chance": 60,
         "AmountUpperBound": 2,
         "AmountLowerBound": 1,
     },
     3: {
-        "ItemName": "Rainbow Lucky Block",
-        "Chance": 40,
+        "ItemName": "Compressed Air",
+        "Chance": 60,
         "AmountUpperBound": 2,
         "AmountLowerBound": 1,
-    },
-    4: {
-        "ItemName": "Prism Lucky Block",
-        "Chance": 30,
-        "AmountUpperBound": 1,
-        "AmountLowerBound": 1,
-    },
+    }
 }
 
 current_stock = {}
@@ -120,3 +114,4 @@ def get_stock():
         raise HTTPException(status_code=500, detail=str(e))
     
 threading.Thread(target=stock_refresh_loop, daemon=True).start()
+
